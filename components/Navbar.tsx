@@ -6,9 +6,14 @@ import Image from "next/image";
 import { ShoppingCart, Menu, X } from "lucide-react";
 import { useCart } from "@/context/CartContext";
 
-export default function Navbar() {
+interface NavbarProps {
+  onOpenCart?: () => void;
+}
+
+export default function Navbar({ onOpenCart }: NavbarProps) {
   const [mobileOpen, setMobileOpen] = useState(false);
-  const { openCart } = useCart();
+  const { openCart: contextOpenCart } = useCart();
+  const handleOpenCart = onOpenCart ?? contextOpenCart;
 
   return (
     <header className="sticky top-0 z-[9999] w-full bg-[#050A15]/90 backdrop-blur-md border-b border-white/10">
@@ -36,7 +41,7 @@ export default function Navbar() {
           <div className="flex justify-end items-center gap-2">
             <button
               type="button"
-              onClick={openCart}
+              onClick={handleOpenCart}
               className="flex items-center gap-2 rounded-full bg-[#2563EB] px-4 py-2 text-sm font-semibold text-white hover:opacity-90 transition-opacity shrink-0"
               aria-label="Panier"
             >
