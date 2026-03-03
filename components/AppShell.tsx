@@ -1,18 +1,18 @@
 "use client";
 
-import React from "react";
-import { CartProvider } from "@/context/CartContext";
+import React, { useState } from "react";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import Cart from "@/components/Cart";
 
 export default function AppShell({ children }: { children: React.ReactNode }) {
+  const [isCartOpen, setIsCartOpen] = useState(false);
   return (
-    <CartProvider>
-      <Navbar />
-      <main className="flex-grow relative">{children}</main>
+    <>
+      <Navbar onOpenCart={() => setIsCartOpen(true)} />
+      <main className="flex-grow relative z-10">{children}</main>
       <Footer />
-      <Cart />
-    </CartProvider>
+      <Cart isOpen={isCartOpen} onClose={() => setIsCartOpen(false)} />
+    </>
   );
 }
