@@ -30,13 +30,20 @@ function SplashLoader() {
     <motion.div
       initial={{ opacity: 1 }}
       exit={{ opacity: 0, y: "-100%" }}
-      transition={{ duration: 0.8, ease: "easeInOut" }}
+      transition={{ duration: 1.2, ease: "easeInOut" }}
       className="fixed inset-0 z-[100] flex items-center justify-center bg-[#050A15]"
     >
       <motion.span
         className="text-5xl md:text-7xl font-bold tracking-[0.3em] text-white"
-        animate={{ opacity: [0, 1, 0.8], scale: [0.95, 1.05, 1] }}
-        transition={{ duration: 1.5, repeat: Infinity }}
+        animate={{
+          opacity: [0.6, 1, 0.7, 1],
+          scale: [0.98, 1.02, 0.98, 1.02],
+        }}
+        transition={{
+          duration: 2.8,
+          repeat: Infinity,
+          ease: "easeInOut",
+        }}
       >
         RMX
       </motion.span>
@@ -205,7 +212,7 @@ export default function HomePage() {
   const [faqOpen, setFaqOpen] = useState<number | null>(null);
 
   useEffect(() => {
-    const t = setTimeout(() => setIsLoading(false), 1800);
+    const t = setTimeout(() => setIsLoading(false), 3500);
     return () => clearTimeout(t);
   }, []);
 
