@@ -35,15 +35,7 @@ function SplashLoader() {
     >
       <motion.span
         className="text-5xl md:text-7xl font-bold tracking-[0.3em] text-white"
-        animate={{
-          opacity: [0.6, 1, 0.7, 1],
-          scale: [0.98, 1.02, 0.98, 1.02],
-        }}
-        transition={{
-          duration: 2.8,
-          repeat: Infinity,
-          ease: "easeInOut",
-        }}
+        animate={{ opacity: [0, 1, 0.8], scale: [0.95, 1.05, 1] }}\n        transition={{ duration: 1.5, repeat: Infinity }}
       >
         RMX
       </motion.span>
@@ -106,8 +98,7 @@ function FaceIDScanner() {
           {isScanning && (
             <motion.div
               initial={{ top: "0%" }}
-              animate={{ top: ["0%", "100%", "0%"] }}
-              transition={{ duration: 2, ease: "easeInOut" }}
+              animate={{ opacity: [0, 1, 0.8], scale: [0.95, 1.05, 1] }}\n        transition={{ duration: 1.5, repeat: Infinity }}
               className="absolute left-0 right-0 h-1 bg-blue-500 shadow-[0_0_15px_rgba(37,99,235,0.8)] z-10"
             />
           )}
@@ -117,76 +108,7 @@ function FaceIDScanner() {
           {isUnlocked && (
             <motion.div
               initial={{ scale: 0, opacity: 0 }}
-              animate={{ scale: 1, opacity: 1 }}
-              className="absolute -bottom-2 -right-2 bg-[#050A15] rounded-full"
-            >
-              <CheckCircle2 className="w-10 h-10 text-green-400" />
-            </motion.div>
-          )}
-        </AnimatePresence>
-      </div>
-
-      {isUnlocked && (
-        <button type="button" onClick={() => setIsUnlocked(false)} className="text-sm font-medium text-slate-400 hover:text-white underline">
-          Réessayer
-        </button>
-      )}
-    </div>
-  );
-}
-
-function FingerprintScanner() {
-  const [isPressing, setIsPressing] = useState(false);
-  const [isUnlocked, setIsUnlocked] = useState(false);
-  const timerRef = React.useRef<ReturnType<typeof setTimeout> | null>(null);
-
-  const clearTimer = () => {
-    if (timerRef.current) {
-      clearTimeout(timerRef.current);
-      timerRef.current = null;
-    }
-  };
-
-  const handlePressStart = () => {
-    if (isUnlocked) return;
-    setIsPressing(true);
-    clearTimer();
-    timerRef.current = setTimeout(() => {
-      timerRef.current = null;
-      setIsPressing(false);
-      setIsUnlocked(true);
-    }, 1000);
-  };
-
-  const handlePressEnd = () => {
-    setIsPressing(false);
-    clearTimer();
-  };
-
-  React.useEffect(() => () => clearTimer(), []);
-
-  return (
-    <div className="bg-white/5 backdrop-blur-xl border border-white/10 rounded-3xl p-8 flex flex-col items-center relative overflow-hidden">
-      <h3 className="text-2xl font-bold mb-2">Test Empreinte</h3>
-      <p className="text-slate-400 text-sm text-center mb-8">
-        {isUnlocked ? "Empreinte validée !" : "Maintenez votre pouce pour déverrouiller."}
-      </p>
-
-      <motion.div
-        onMouseDown={handlePressStart}
-        onMouseUp={handlePressEnd}
-        onMouseLeave={handlePressEnd}
-        onTouchStart={(e) => {
-          e.preventDefault();
-          handlePressStart();
-        }}
-        onTouchEnd={(e) => {
-          e.preventDefault();
-          handlePressEnd();
-        }}
-        onTouchCancel={handlePressEnd}
-        animate={{ scale: isPressing ? 0.95 : 1 }}
-        transition={{ duration: 0.1 }}
+              animate={{ opacity: [0, 1, 0.8], scale: [0.95, 1.05, 1] }}\n        transition={{ duration: 1.5, repeat: Infinity }}
         style={{ boxShadow: isPressing ? "inset 0 0 30px rgba(37,99,235,0.5)" : "none" }}
         className="relative w-28 h-28 rounded-full border-2 border-dashed border-slate-600 flex items-center justify-center cursor-pointer touch-none select-none mb-6"
       >
@@ -212,7 +134,7 @@ export default function HomePage() {
   const [faqOpen, setFaqOpen] = useState<number | null>(null);
 
   useEffect(() => {
-    const t = setTimeout(() => setIsLoading(false), 3500);
+    const t = setTimeout(() => setIsLoading(false), 3000);
     return () => clearTimeout(t);
   }, []);
 
@@ -397,9 +319,7 @@ export default function HomePage() {
               {faqOpen === 1 && (
                 <motion.div
                   initial={{ height: 0, opacity: 0 }}
-                  animate={{ height: "auto", opacity: 1 }}
-                  exit={{ height: 0, opacity: 0 }}
-                  transition={{ duration: 0.25 }}
+                  animate={{ opacity: [0, 1, 0.8], scale: [0.95, 1.05, 1] }}\n        transition={{ duration: 1.5, repeat: Infinity }}
                   className="overflow-hidden"
                 >
                   <div className="px-5 pb-4 pt-0">
@@ -427,9 +347,7 @@ export default function HomePage() {
               {faqOpen === 2 && (
                 <motion.div
                   initial={{ height: 0, opacity: 0 }}
-                  animate={{ height: "auto", opacity: 1 }}
-                  exit={{ height: 0, opacity: 0 }}
-                  transition={{ duration: 0.25 }}
+                  animate={{ opacity: [0, 1, 0.8], scale: [0.95, 1.05, 1] }}\n        transition={{ duration: 1.5, repeat: Infinity }}
                   className="overflow-hidden"
                 >
                   <div className="px-5 pb-4 pt-0">
@@ -457,9 +375,7 @@ export default function HomePage() {
               {faqOpen === 3 && (
                 <motion.div
                   initial={{ height: 0, opacity: 0 }}
-                  animate={{ height: "auto", opacity: 1 }}
-                  exit={{ height: 0, opacity: 0 }}
-                  transition={{ duration: 0.25 }}
+                  animate={{ opacity: [0, 1, 0.8], scale: [0.95, 1.05, 1] }}\n        transition={{ duration: 1.5, repeat: Infinity }}
                   className="overflow-hidden"
                 >
                   <div className="px-5 pb-4 pt-0">
@@ -492,3 +408,6 @@ export default function HomePage() {
     </div>
   );
 }
+
+
+
