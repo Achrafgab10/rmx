@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useState, useEffect, useRef } from "react";
+import { createPortal } from "react-dom";
 import Image from "next/image";
 import Link from "next/link";
 import { motion, AnimatePresence } from "framer-motion";
@@ -23,25 +24,6 @@ const fadeInUp = {
   viewport: { once: true, margin: "-48px" },
   transition: { duration: 0.5 },
 };
-
-// --- SPLASH LOADER ---
-function SplashLoader() {
-  return (
-    <motion.div
-      initial={{ opacity: 1 }}
-      exit={{ opacity: 0, y: "-100%" }}
-      transition={{ duration: 1.2, ease: "easeInOut" }}
-      className="fixed inset-0 z-[100] flex items-center justify-center bg-[#050A15]"
-    >
-      <motion.span
-        className="text-5xl md:text-7xl font-bold tracking-[0.3em] text-white"
-        animate={{ opacity: [0, 1, 0.8], scale: [0.95, 1.05, 1] }}\n        transition={{ duration: 1.5, repeat: Infinity }}
-      >
-        RMX
-      </motion.span>
-    </motion.div>
-  );
-}
 
 // --- DATA ---
 const TOP_SALES = [
@@ -98,7 +80,8 @@ function FaceIDScanner() {
           {isScanning && (
             <motion.div
               initial={{ top: "0%" }}
-              animate={{ opacity: [0, 1, 0.8], scale: [0.95, 1.05, 1] }}\n        transition={{ duration: 1.5, repeat: Infinity }}
+              animate={{ top: ["0%", "100%", "0%"] }}
+              transition={{ duration: 2, ease: "easeInOut" }}
               className="absolute left-0 right-0 h-1 bg-blue-500 shadow-[0_0_15px_rgba(37,99,235,0.8)] z-10"
             />
           )}
@@ -108,7 +91,76 @@ function FaceIDScanner() {
           {isUnlocked && (
             <motion.div
               initial={{ scale: 0, opacity: 0 }}
-              animate={{ opacity: [0, 1, 0.8], scale: [0.95, 1.05, 1] }}\n        transition={{ duration: 1.5, repeat: Infinity }}
+              animate={{ scale: 1, opacity: 1 }}
+              className="absolute -bottom-2 -right-2 bg-[#050A15] rounded-full"
+            >
+              <CheckCircle2 className="w-10 h-10 text-green-400" />
+            </motion.div>
+          )}
+        </AnimatePresence>
+      </div>
+
+      {isUnlocked && (
+        <button type="button" onClick={() => setIsUnlocked(false)} className="text-sm font-medium text-slate-400 hover:text-white underline">
+          Réessayer
+        </button>
+      )}
+    </div>
+  );
+}
+
+function FingerprintScanner() {
+  const [isPressing, setIsPressing] = useState(false);
+  const [isUnlocked, setIsUnlocked] = useState(false);
+  const timerRef = React.useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  const clearTimer = () => {
+    if (timerRef.current) {
+      clearTimeout(timerRef.current);
+      timerRef.current = null;
+    }
+  };
+
+  const handlePressStart = () => {
+    if (isUnlocked) return;
+    setIsPressing(true);
+    clearTimer();
+    timerRef.current = setTimeout(() => {
+      timerRef.current = null;
+      setIsPressing(false);
+      setIsUnlocked(true);
+    }, 1000);
+  };
+
+  const handlePressEnd = () => {
+    setIsPressing(false);
+    clearTimer();
+  };
+
+  React.useEffect(() => () => clearTimer(), []);
+
+  return (
+    <div className="bg-white/5 backdrop-blur-xl border border-white/10 rounded-3xl p-8 flex flex-col items-center relative overflow-hidden">
+      <h3 className="text-2xl font-bold mb-2">Test Empreinte</h3>
+      <p className="text-slate-400 text-sm text-center mb-8">
+        {isUnlocked ? "Empreinte validée !" : "Maintenez votre pouce pour déverrouiller."}
+      </p>
+
+      <motion.div
+        onMouseDown={handlePressStart}
+        onMouseUp={handlePressEnd}
+        onMouseLeave={handlePressEnd}
+        onTouchStart={(e) => {
+          e.preventDefault();
+          handlePressStart();
+        }}
+        onTouchEnd={(e) => {
+          e.preventDefault();
+          handlePressEnd();
+        }}
+        onTouchCancel={handlePressEnd}
+        animate={{ scale: isPressing ? 0.95 : 1 }}
+        transition={{ duration: 0.1 }}
         style={{ boxShadow: isPressing ? "inset 0 0 30px rgba(37,99,235,0.5)" : "none" }}
         className="relative w-28 h-28 rounded-full border-2 border-dashed border-slate-600 flex items-center justify-center cursor-pointer touch-none select-none mb-6"
       >
@@ -128,6 +180,8 @@ const carouselProducts = [...GAMME_MARQUEE_BASE, ...GAMME_MARQUEE_BASE];
 
 export default function HomePage() {
   const [isLoading, setIsLoading] = useState(true);
+  const [isMounted, setIsMounted] = useState(false);
+  const timerRanRef = useRef(false);
   const [isGammeHovered, setIsGammeHovered] = useState(false);
   const [isMuted, setIsMuted] = useState(true);
   const heroVideoRef = useRef<HTMLVideoElement>(null);
@@ -135,9 +189,25 @@ export default function HomePage() {
   const [faqOpen, setFaqOpen] = useState<number | null>(null);
 
   useEffect(() => {
-    const t = setTimeout(() => setIsLoading(false), 3000);
-    return () => clearTimeout(t);
+    setIsMounted(true);
   }, []);
+
+  useEffect(() => {
+    if (!isMounted) return;
+    if (isLoading) {
+      document.body.style.overflow = "hidden";
+    } else {
+      document.body.style.overflow = "auto";
+    }
+    if (isLoading && !timerRanRef.current) {
+      timerRanRef.current = true;
+      const timer = setTimeout(() => setIsLoading(false), 3000);
+      return () => {
+        clearTimeout(timer);
+        document.body.style.overflow = "auto";
+      };
+    }
+  }, [isMounted, isLoading]);
 
   useEffect(() => {
     const playVideo = (videoElement: HTMLVideoElement | null) => {
@@ -152,11 +222,38 @@ export default function HomePage() {
     playVideo(missionVideoRef.current);
   }, []);
 
+  const preloaderEl =
+    isMounted &&
+    typeof document !== "undefined" &&
+    createPortal(
+      <AnimatePresence mode="wait">
+        {isLoading && (
+          <motion.div
+            key="new-preloader"
+            initial={{ opacity: 1 }}
+            exit={{ opacity: 0, y: "-100%" }}
+            transition={{ duration: 0.8, ease: "easeInOut" }}
+            className="fixed inset-0 z-[999999] flex items-center justify-center bg-[#050A15]"
+            style={{ position: "fixed", inset: 0, zIndex: 999999 }}
+            aria-live="polite"
+            aria-label="Chargement"
+          >
+            <motion.div
+              animate={{ scale: [0.9, 1.1, 1], opacity: [0.5, 1, 0.8] }}
+              transition={{ duration: 1.5, repeat: Infinity }}
+              className="text-5xl md:text-7xl font-bold tracking-[0.3em] text-white drop-shadow-[0_0_15px_rgba(255,255,255,0.3)]"
+            >
+              RMX
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>,
+      document.body
+    );
+
   return (
     <div className={`bg-[#050A15] text-white selection:bg-blue-500/30 block ${isLoading ? "overflow-hidden" : ""}`}>
-      <AnimatePresence mode="wait">
-        {isLoading && <SplashLoader />}
-      </AnimatePresence>
+      {preloaderEl}
 
       {/* 1. HERO VIDEO SECTION */}
       <section className="relative h-[85vh] min-h-[600px] flex items-center justify-center px-4 overflow-hidden">
@@ -344,7 +441,8 @@ export default function HomePage() {
               {faqOpen === 1 && (
                 <motion.div
                   initial={{ height: 0, opacity: 0 }}
-                  animate={{ opacity: [0, 1, 0.8], scale: [0.95, 1.05, 1] }}\n        transition={{ duration: 1.5, repeat: Infinity }}
+                  animate={{ height: "auto", opacity: 1 }}
+                  transition={{ duration: 0.25 }}
                   className="overflow-hidden"
                 >
                   <div className="px-5 pb-4 pt-0">
@@ -372,7 +470,8 @@ export default function HomePage() {
               {faqOpen === 2 && (
                 <motion.div
                   initial={{ height: 0, opacity: 0 }}
-                  animate={{ opacity: [0, 1, 0.8], scale: [0.95, 1.05, 1] }}\n        transition={{ duration: 1.5, repeat: Infinity }}
+                  animate={{ height: "auto", opacity: 1 }}
+                  transition={{ duration: 0.25 }}
                   className="overflow-hidden"
                 >
                   <div className="px-5 pb-4 pt-0">
@@ -400,7 +499,8 @@ export default function HomePage() {
               {faqOpen === 3 && (
                 <motion.div
                   initial={{ height: 0, opacity: 0 }}
-                  animate={{ opacity: [0, 1, 0.8], scale: [0.95, 1.05, 1] }}\n        transition={{ duration: 1.5, repeat: Infinity }}
+                  animate={{ height: "auto", opacity: 1 }}
+                  transition={{ duration: 0.25 }}
                   className="overflow-hidden"
                 >
                   <div className="px-5 pb-4 pt-0">

@@ -23,12 +23,8 @@ export const metadata: Metadata = {
   title: "RMX | Serrures intelligentes premium",
   description: "La serrure intelligente n°1. Reconnaissance faciale 3D, application Tuya et sécurité bancaire.",
   icons: {
-    icon: [
-      { url: "/icon", type: "image/png", sizes: "32x32" },
-      { url: "/assets/logo.jpeg", type: "image/jpeg", sizes: "any" },
-    ],
-    shortcut: "/icon",
-    apple: "/icon",
+    icon: "/assets/logo.jpeg",
+    apple: "/assets/logo.jpeg",
   },
 };
 
