@@ -130,12 +130,26 @@ export default function HomePage() {
   const [isLoading, setIsLoading] = useState(true);
   const [isGammeHovered, setIsGammeHovered] = useState(false);
   const [isMuted, setIsMuted] = useState(true);
-  const videoRef = useRef<HTMLVideoElement>(null);
+  const heroVideoRef = useRef<HTMLVideoElement>(null);
+  const missionVideoRef = useRef<HTMLVideoElement>(null);
   const [faqOpen, setFaqOpen] = useState<number | null>(null);
 
   useEffect(() => {
     const t = setTimeout(() => setIsLoading(false), 3000);
     return () => clearTimeout(t);
+  }, []);
+
+  useEffect(() => {
+    const playVideo = (videoElement: HTMLVideoElement | null) => {
+      if (videoElement) {
+        videoElement.defaultMuted = true;
+        videoElement.muted = true;
+        videoElement.playsInline = true;
+        videoElement.play().catch((err) => console.log("Autoplay iOS bloqué :", err));
+      }
+    };
+    playVideo(heroVideoRef.current);
+    playVideo(missionVideoRef.current);
   }, []);
 
   return (
@@ -148,7 +162,16 @@ export default function HomePage() {
       <section className="relative h-[85vh] min-h-[600px] flex items-center justify-center px-4 overflow-hidden">
         {/* Video Background */}
         <div className="absolute inset-0 z-0">
-          <video autoPlay loop muted playsInline className="w-full h-full object-cover opacity-60">
+          <video
+            ref={heroVideoRef}
+            autoPlay
+            loop
+            muted
+            playsInline
+            disablePictureInPicture
+            preload="auto"
+            className="w-full h-full object-cover opacity-60"
+          >
             <source src="/assets/hero-bg.mp4" type="video/mp4" />
           </video>
           {/* Dark gradient overlay for text readability */}
@@ -246,12 +269,14 @@ export default function HomePage() {
         </div>
         <div className="relative w-full h-[70vh] min-h-[500px] md:max-w-5xl md:mx-auto md:rounded-[2rem] overflow-hidden border-y md:border border-white/10">
           <video
-            ref={videoRef}
+            ref={missionVideoRef}
             src="/assets/RMX MISSION.mp4"
             autoPlay
             loop
             muted={isMuted}
             playsInline
+            disablePictureInPicture
+            preload="auto"
             className="absolute inset-0 w-full h-full object-cover"
           />
           <button
