@@ -184,7 +184,19 @@ export default function HomePage() {
   const timerRanRef = useRef(false);
   const [isGammeHovered, setIsGammeHovered] = useState(false);
   const [isMuted, setIsMuted] = useState(true);
+  const missionVideoRef = useRef<HTMLVideoElement>(null);
   const [faqOpen, setFaqOpen] = useState<number | null>(null);
+
+  const toggleSound = () => {
+    if (missionVideoRef.current) {
+      const newMutedState = !missionVideoRef.current.muted;
+      missionVideoRef.current.muted = newMutedState;
+      setIsMuted(newMutedState);
+      if (!newMutedState) {
+        missionVideoRef.current.play().catch((e) => console.error("iOS Audio Play Blocked", e));
+      }
+    }
+  };
 
   useEffect(() => {
     setIsMounted(true);
@@ -354,27 +366,20 @@ export default function HomePage() {
           <h2 className="text-3xl font-bold text-white">Comment on installe ?</h2>
         </div>
         <div className="relative w-full h-[70vh] min-h-[500px] md:max-w-5xl md:mx-auto md:rounded-[2rem] overflow-hidden border-y md:border border-white/10">
-          <div
-            className="absolute inset-0 w-full h-full z-0"
-            dangerouslySetInnerHTML={{
-              __html: `
-                <video
-                  autoplay
-                  loop
-                  muted
-                  playsinline
-                  disablepictureinpicture
-                  preload="auto"
-                  style="width: 100%; height: 100%; object-fit: cover;"
-                >
-                  <source src="/assets/RMX MISSION.mp4" type="video/mp4" />
-                </video>
-              `,
-            }}
+          <video
+            ref={missionVideoRef}
+            autoPlay
+            loop
+            muted={isMuted}
+            playsInline
+            disablePictureInPicture
+            preload="auto"
+            className="absolute inset-0 w-full h-full object-cover z-0"
+            src="/assets/RMX MISSION.mp4"
           />
           <button
             type="button"
-            onClick={() => setIsMuted(!isMuted)}
+            onClick={toggleSound}
             className="absolute top-4 right-4 z-20 flex items-center gap-2 bg-black/50 backdrop-blur-md border border-white/20 text-white px-4 py-2 rounded-full text-sm font-semibold transition-all hover:bg-black/70"
             aria-label={isMuted ? "Activer le son" : "Couper le son"}
           >
