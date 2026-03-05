@@ -235,13 +235,13 @@ export default function HomePage() {
             aria-live="polite"
             aria-label="Chargement"
           >
-            <motion.div
-              animate={{ scale: [0.9, 1.1, 1], opacity: [0.5, 1, 0.8] }}
-              transition={{ duration: 1.5, repeat: Infinity }}
-              className="text-5xl md:text-7xl font-bold tracking-[0.3em] text-white drop-shadow-[0_0_15px_rgba(255,255,255,0.3)]"
-            >
-              RMX
-            </motion.div>
+            <motion.img
+              src="/assets/logo.jpeg"
+              alt="RMX Logo Loading"
+              animate={{ scale: [0.95, 1.05, 1], opacity: [0.5, 1, 0.8] }}
+              transition={{ duration: 1.5, repeat: Infinity, ease: "easeInOut" }}
+              className="w-40 md:w-56 h-auto object-contain mix-blend-screen drop-shadow-[0_0_20px_rgba(255,255,255,0.2)]"
+            />
           </motion.div>
         )}
       </AnimatePresence>,
