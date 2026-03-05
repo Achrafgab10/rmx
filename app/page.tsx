@@ -184,8 +184,6 @@ export default function HomePage() {
   const timerRanRef = useRef(false);
   const [isGammeHovered, setIsGammeHovered] = useState(false);
   const [isMuted, setIsMuted] = useState(true);
-  const heroVideoRef = useRef<HTMLVideoElement>(null);
-  const missionVideoRef = useRef<HTMLVideoElement>(null);
   const [faqOpen, setFaqOpen] = useState<number | null>(null);
 
   useEffect(() => {
@@ -208,19 +206,6 @@ export default function HomePage() {
       };
     }
   }, [isMounted, isLoading]);
-
-  useEffect(() => {
-    const playVideo = (videoElement: HTMLVideoElement | null) => {
-      if (videoElement) {
-        videoElement.defaultMuted = true;
-        videoElement.muted = true;
-        videoElement.playsInline = true;
-        videoElement.play().catch((err) => console.log("Autoplay iOS bloqué :", err));
-      }
-    };
-    playVideo(heroVideoRef.current);
-    playVideo(missionVideoRef.current);
-  }, []);
 
   const preloaderEl =
     isMounted &&
@@ -257,23 +242,27 @@ export default function HomePage() {
 
       {/* 1. HERO VIDEO SECTION */}
       <section className="relative h-[85vh] min-h-[600px] flex items-center justify-center px-4 overflow-hidden">
-        {/* Video Background */}
-        <div className="absolute inset-0 z-0">
-          <video
-            ref={heroVideoRef}
-            autoPlay
-            loop
-            muted
-            playsInline
-            disablePictureInPicture
-            preload="auto"
-            className="w-full h-full object-cover opacity-60"
-          >
-            <source src="/assets/hero-bg.mp4" type="video/mp4" />
-          </video>
-          {/* Dark gradient overlay for text readability */}
-          <div className="absolute inset-0 bg-gradient-to-b from-black/40 via-[#050A15]/40 to-[#050A15]" />
-        </div>
+        {/* Video Background - raw HTML for iOS Safari autoplay */}
+        <div
+          className="absolute inset-0 z-0 w-full h-full"
+          dangerouslySetInnerHTML={{
+            __html: `
+              <video
+                autoplay
+                loop
+                muted
+                playsinline
+                disablepictureinpicture
+                preload="auto"
+                style="width: 100%; height: 100%; object-fit: cover; opacity: 0.6;"
+              >
+                <source src="/assets/hero-bg.mp4" type="video/mp4" />
+              </video>
+            `,
+          }}
+        />
+        {/* Dark gradient overlay for text readability */}
+        <div className="absolute inset-0 bg-gradient-to-b from-black/40 via-[#050A15]/40 to-[#050A15]" />
 
         <motion.div {...fadeInUp} className="relative z-10 text-center max-w-3xl mt-16">
           <h1 className="text-4xl md:text-6xl font-bold leading-tight tracking-tighter mb-6 text-white drop-shadow-xl">
@@ -365,16 +354,23 @@ export default function HomePage() {
           <h2 className="text-3xl font-bold text-white">Comment on installe ?</h2>
         </div>
         <div className="relative w-full h-[70vh] min-h-[500px] md:max-w-5xl md:mx-auto md:rounded-[2rem] overflow-hidden border-y md:border border-white/10">
-          <video
-            ref={missionVideoRef}
-            src="/assets/RMX MISSION.mp4"
-            autoPlay
-            loop
-            muted={isMuted}
-            playsInline
-            disablePictureInPicture
-            preload="auto"
-            className="absolute inset-0 w-full h-full object-cover"
+          <div
+            className="absolute inset-0 w-full h-full z-0"
+            dangerouslySetInnerHTML={{
+              __html: `
+                <video
+                  autoplay
+                  loop
+                  muted
+                  playsinline
+                  disablepictureinpicture
+                  preload="auto"
+                  style="width: 100%; height: 100%; object-fit: cover;"
+                >
+                  <source src="/assets/RMX MISSION.mp4" type="video/mp4" />
+                </video>
+              `,
+            }}
           />
           <button
             type="button"
