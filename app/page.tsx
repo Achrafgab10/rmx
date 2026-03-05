@@ -235,13 +235,24 @@ export default function HomePage() {
             aria-live="polite"
             aria-label="Chargement"
           >
-            <motion.img
-              src="/assets/logo.jpeg"
-              alt="RMX Logo Loading"
-              animate={{ scale: [0.95, 1.05, 1], opacity: [0.5, 1, 0.8] }}
-              transition={{ duration: 1.5, repeat: Infinity, ease: "easeInOut" }}
-              className="w-40 md:w-56 h-auto object-contain mix-blend-screen drop-shadow-[0_0_20px_rgba(255,255,255,0.2)]"
-            />
+            <div className="flex flex-col items-center justify-center gap-6">
+              <motion.span
+                className="text-4xl md:text-6xl font-extralight tracking-[0.4em] text-white uppercase"
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                transition={{ duration: 1.5, ease: "easeInOut" }}
+              >
+                RMX
+              </motion.span>
+              <div className="w-48 h-[1px] bg-white/10 relative overflow-hidden rounded-full">
+                <motion.div
+                  className="absolute top-0 left-0 h-full bg-blue-500 shadow-[0_0_8px_#3b82f6]"
+                  initial={{ width: "0%" }}
+                  animate={{ width: "100%" }}
+                  transition={{ duration: 2.8, ease: "easeInOut" }}
+                />
+              </div>
+            </div>
           </motion.div>
         )}
       </AnimatePresence>,
