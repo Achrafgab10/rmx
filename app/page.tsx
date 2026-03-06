@@ -189,11 +189,18 @@ export default function HomePage() {
   const [faqOpen, setFaqOpen] = useState<number | null>(null);
 
   useEffect(() => {
-    if (missionVideoRef.current) {
-      if (isVideoInView) {
-        missionVideoRef.current.play().catch((e) => console.error("iOS Autoplay bloqué :", e));
-      } else {
-        missionVideoRef.current.pause();
+    const video = missionVideoRef.current;
+    if (!video) return;
+    if (isVideoInView) {
+      const playPromise = video.play();
+      if (playPromise !== undefined) {
+        playPromise.catch((error) => {
+          console.log("Lecture iOS bloquée ou interrompue :", error);
+        });
+      }
+    } else {
+      if (!video.paused) {
+        video.pause();
       }
     }
   }, [isVideoInView]);
