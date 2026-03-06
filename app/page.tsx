@@ -4,7 +4,7 @@ import React, { useState, useEffect, useRef } from "react";
 import { createPortal } from "react-dom";
 import Image from "next/image";
 import Link from "next/link";
-import { motion, AnimatePresence } from "framer-motion";
+import { motion, AnimatePresence, useInView } from "framer-motion";
 import {
   MessageCircle,
   ChevronRight,
@@ -185,7 +185,18 @@ export default function HomePage() {
   const [isGammeHovered, setIsGammeHovered] = useState(false);
   const [isMuted, setIsMuted] = useState(true);
   const missionVideoRef = useRef<HTMLVideoElement>(null);
+  const isVideoInView = useInView(missionVideoRef, { margin: "-100px", once: false });
   const [faqOpen, setFaqOpen] = useState<number | null>(null);
+
+  useEffect(() => {
+    if (missionVideoRef.current) {
+      if (isVideoInView) {
+        missionVideoRef.current.play().catch((e) => console.error("iOS Autoplay bloqué :", e));
+      } else {
+        missionVideoRef.current.pause();
+      }
+    }
+  }, [isVideoInView]);
 
   const toggleSound = () => {
     if (missionVideoRef.current) {
@@ -379,7 +390,6 @@ export default function HomePage() {
         <div className="relative w-full h-[70vh] min-h-[500px] md:max-w-5xl md:mx-auto md:rounded-[2rem] overflow-hidden border-y md:border border-white/10">
           <video
             ref={missionVideoRef}
-            autoPlay
             loop
             muted={isMuted}
             playsInline
