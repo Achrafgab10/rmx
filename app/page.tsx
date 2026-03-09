@@ -184,30 +184,37 @@ export default function HomePage() {
   const timerRanRef = useRef(false);
   const [isGammeHovered, setIsGammeHovered] = useState(false);
   const [isMuted, setIsMuted] = useState(true);
+  const heroVideoRef = useRef<HTMLVideoElement>(null);
   const missionVideoRef = useRef<HTMLVideoElement>(null);
   const [faqOpen, setFaqOpen] = useState<number | null>(null);
 
   useEffect(() => {
-    const video = missionVideoRef.current;
-    if (!video) return;
+    const heroVideo = heroVideoRef.current;
+    const missionVideo = missionVideoRef.current;
+    if (!heroVideo || !missionVideo) return;
     const observer = new IntersectionObserver(
       (entries) => {
         entries.forEach((entry) => {
+          const video = entry.target as HTMLVideoElement;
           if (entry.isIntersecting) {
             const playPromise = video.play();
             if (playPromise !== undefined) {
               playPromise.catch(() => { /* Silence strict pour iOS */ });
             }
-          } else {
-            if (!video.paused) {
-              video.pause();
+            if (video === heroVideo) {
+              if (!missionVideo.paused) missionVideo.pause();
+            } else {
+              if (!heroVideo.paused) heroVideo.pause();
             }
+          } else {
+            if (!video.paused) video.pause();
           }
         });
       },
       { threshold: 0.2 }
     );
-    observer.observe(video);
+    observer.observe(heroVideo);
+    observer.observe(missionVideo);
     return () => {
       observer.disconnect();
     };
@@ -291,24 +298,16 @@ export default function HomePage() {
 
       {/* 1. HERO VIDEO SECTION */}
       <section className="relative h-[85vh] min-h-[600px] flex items-center justify-center px-4 overflow-hidden">
-        {/* Video Background - raw HTML for iOS Safari autoplay */}
-        <div
-          className="absolute inset-0 z-0 w-full h-full"
-          dangerouslySetInnerHTML={{
-            __html: `
-              <video
-                autoplay
-                loop
-                muted
-                playsinline
-                disablepictureinpicture
-                preload="auto"
-                style="width: 100%; height: 100%; object-fit: cover; opacity: 0.6;"
-              >
-                <source src="/assets/hero-bg.mp4" type="video/mp4" />
-              </video>
-            `,
-          }}
+        <video
+          ref={heroVideoRef}
+          loop
+          muted
+          playsInline
+          disablePictureInPicture
+          preload="metadata"
+          poster="/assets/logo.jpeg"
+          className="absolute inset-0 z-0 w-full h-full object-cover opacity-60 transform-gpu will-change-transform"
+          src="/assets/hero-bg.mp4"
         />
         {/* Dark gradient overlay for text readability */}
         <div className="absolute inset-0 bg-gradient-to-b from-black/40 via-[#050A15]/40 to-[#050A15]" />
@@ -409,14 +408,15 @@ export default function HomePage() {
             muted={isMuted}
             playsInline
             disablePictureInPicture
-            preload="auto"
+            preload="metadata"
+            poster="/assets/logo.jpeg"
             className="absolute inset-0 w-full h-full object-cover z-0 transform-gpu will-change-transform"
             src="/assets/RMX MISSION.mp4"
           />
           <button
             type="button"
             onClick={toggleSound}
-            className="absolute top-4 right-4 z-20 flex items-center gap-2 bg-black/50 backdrop-blur-md border border-white/20 text-white px-4 py-2 rounded-full text-sm font-semibold transition-all hover:bg-black/70"
+            className="absolute top-4 right-4 z-20 flex items-center gap-2 bg-black/60 border border-white/20 text-white px-4 py-2 rounded-full text-sm font-semibold transition-all hover:bg-black/70"
             aria-label={isMuted ? "Activer le son" : "Couper le son"}
           >
             {isMuted ? (
