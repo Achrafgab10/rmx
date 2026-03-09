@@ -4,7 +4,7 @@ import React, { useState, useEffect, useRef } from "react";
 import { createPortal } from "react-dom";
 import Image from "next/image";
 import Link from "next/link";
-import { motion, AnimatePresence, useInView } from "framer-motion";
+import { motion, AnimatePresence } from "framer-motion";
 import {
   MessageCircle,
   ChevronRight,
@@ -185,25 +185,33 @@ export default function HomePage() {
   const [isGammeHovered, setIsGammeHovered] = useState(false);
   const [isMuted, setIsMuted] = useState(true);
   const missionVideoRef = useRef<HTMLVideoElement>(null);
-  const isVideoInView = useInView(missionVideoRef, { margin: "-100px", once: false });
   const [faqOpen, setFaqOpen] = useState<number | null>(null);
 
   useEffect(() => {
     const video = missionVideoRef.current;
     if (!video) return;
-    if (isVideoInView) {
-      const playPromise = video.play();
-      if (playPromise !== undefined) {
-        playPromise.catch((error) => {
-          console.log("Lecture iOS bloquée ou interrompue :", error);
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            const playPromise = video.play();
+            if (playPromise !== undefined) {
+              playPromise.catch(() => { /* Silence strict pour iOS */ });
+            }
+          } else {
+            if (!video.paused) {
+              video.pause();
+            }
+          }
         });
-      }
-    } else {
-      if (!video.paused) {
-        video.pause();
-      }
-    }
-  }, [isVideoInView]);
+      },
+      { threshold: 0.2 }
+    );
+    observer.observe(video);
+    return () => {
+      observer.disconnect();
+    };
+  }, []);
 
   const toggleSound = () => {
     if (missionVideoRef.current) {
@@ -402,7 +410,7 @@ export default function HomePage() {
             playsInline
             disablePictureInPicture
             preload="auto"
-            className="absolute inset-0 w-full h-full object-cover z-0"
+            className="absolute inset-0 w-full h-full object-cover z-0 transform-gpu will-change-transform"
             src="/assets/RMX MISSION.mp4"
           />
           <button
