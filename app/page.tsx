@@ -19,9 +19,7 @@ import {
 
 // --- ANIMATION VARIANTS ---
 const fadeInUp = {
-  initial: { opacity: 0, y: 24 },
-  whileInView: { opacity: 1, y: 0 },
-  viewport: { once: true, margin: "-48px" },
+  initial: { opacity: 1 },
   transition: { duration: 0.5 },
 };
 
@@ -297,8 +295,9 @@ export default function HomePage() {
       {preloaderEl}
 
       {/* 1. HERO VIDEO SECTION */}
-      <section className="relative h-[85dvh] min-h-[600px] flex items-center justify-center px-4 overflow-hidden">
-        <video
+      <section className="relative h-[85dvh] min-h-[600px] flex items-center justify-center px-4 overflow-clip">
+        <div className="absolute inset-0 z-0 overflow-clip transform-gpu [transform:translateZ(0)] [mask-image:-webkit-radial-gradient(white,black)]">
+          <video
           ref={heroVideoRef}
           loop
           muted
@@ -309,6 +308,7 @@ export default function HomePage() {
           className="absolute inset-0 z-0 w-full h-full object-cover opacity-60 transform-gpu will-change-transform"
           src="/assets/hero-bg.mp4"
         />
+        </div>
         {/* Dark gradient overlay for text readability */}
         <div className="absolute inset-0 bg-gradient-to-b from-black/40 via-[#050A15]/40 to-[#050A15]" />
 
@@ -401,7 +401,7 @@ export default function HomePage() {
         <div className="px-4 max-w-5xl mx-auto mb-8 text-center">
           <h2 className="text-3xl font-bold text-white">Comment on installe ?</h2>
         </div>
-        <div className="relative w-full h-[70dvh] min-h-[500px] md:max-w-5xl md:mx-auto md:rounded-[2rem] overflow-hidden border-y md:border border-white/10">
+        <div className="relative w-full h-[70dvh] min-h-[500px] md:max-w-5xl md:mx-auto md:rounded-[2rem] overflow-clip border-y md:border border-white/10 transform-gpu [transform:translateZ(0)] [mask-image:-webkit-radial-gradient(white,black)]">
           <video
             ref={missionVideoRef}
             loop
