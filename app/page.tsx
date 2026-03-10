@@ -61,7 +61,7 @@ function FaceIDScanner() {
   };
 
   return (
-    <div className="bg-white/5 backdrop-blur-xl border border-white/10 rounded-3xl p-8 flex flex-col items-center relative overflow-hidden">
+    <div className="bg-[#050A15]/95 border border-white/10 rounded-3xl p-8 flex flex-col items-center relative overflow-hidden">
       <h3 className="text-2xl font-bold mb-2">Test Face ID 3D</h3>
       <p className="text-slate-400 text-sm text-center mb-6">
         {isUnlocked ? "Visage reconnu" : "Appuyez pour simuler le scan radar."}
@@ -140,7 +140,7 @@ function FingerprintScanner() {
   React.useEffect(() => () => clearTimer(), []);
 
   return (
-    <div className="bg-white/5 backdrop-blur-xl border border-white/10 rounded-3xl p-8 flex flex-col items-center relative overflow-hidden">
+    <div className="bg-[#050A15]/95 border border-white/10 rounded-3xl p-8 flex flex-col items-center relative overflow-hidden">
       <h3 className="text-2xl font-bold mb-2">Test Empreinte</h3>
       <p className="text-slate-400 text-sm text-center mb-8">
         {isUnlocked ? "Empreinte validée !" : "Maintenez votre pouce pour déverrouiller."}
@@ -240,14 +240,14 @@ export default function HomePage() {
     if (isLoading) {
       document.body.style.overflow = "hidden";
     } else {
-      document.body.style.overflow = "auto";
+      document.body.style.overflow = "";
     }
     if (isLoading && !timerRanRef.current) {
       timerRanRef.current = true;
       const timer = setTimeout(() => setIsLoading(false), 3000);
       return () => {
         clearTimeout(timer);
-        document.body.style.overflow = "auto";
+        document.body.style.overflow = "";
       };
     }
   }, [isMounted, isLoading]);
@@ -297,7 +297,7 @@ export default function HomePage() {
       {preloaderEl}
 
       {/* 1. HERO VIDEO SECTION */}
-      <section className="relative h-[85vh] min-h-[600px] flex items-center justify-center px-4 overflow-hidden">
+      <section className="relative h-[85dvh] min-h-[600px] flex items-center justify-center px-4 overflow-hidden">
         <video
           ref={heroVideoRef}
           loop
@@ -379,7 +379,7 @@ export default function HomePage() {
               carouselProducts.map((product, i) => (
                 <div
                   key={`${product.id}-${copy}-${i}`}
-                  className="shrink-0 w-[80vw] sm:w-[280px] bg-white/5 backdrop-blur-xl border border-white/10 rounded-3xl p-4 flex flex-col"
+                  className="shrink-0 w-[80vw] sm:w-[280px] bg-[#050A15]/95 border border-white/10 rounded-3xl p-4 flex flex-col"
                 >
                   <div className="relative w-full aspect-square bg-white rounded-2xl mb-4 overflow-hidden p-4">
                     <Image src={product.image} alt={product.name} fill className="object-contain" sizes="(max-width: 640px) 80vw, 280px" />
@@ -401,7 +401,7 @@ export default function HomePage() {
         <div className="px-4 max-w-5xl mx-auto mb-8 text-center">
           <h2 className="text-3xl font-bold text-white">Comment on installe ?</h2>
         </div>
-        <div className="relative w-full h-[70vh] min-h-[500px] md:max-w-5xl md:mx-auto md:rounded-[2rem] overflow-hidden border-y md:border border-white/10">
+        <div className="relative w-full h-[70dvh] min-h-[500px] md:max-w-5xl md:mx-auto md:rounded-[2rem] overflow-hidden border-y md:border border-white/10">
           <video
             ref={missionVideoRef}
             loop

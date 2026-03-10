@@ -16,7 +16,7 @@ export default function Navbar({ onOpenCart }: NavbarProps) {
   const handleOpenCart = onOpenCart ?? contextOpenCart;
 
   return (
-    <header className="sticky top-0 z-[9999] w-full bg-[#050A15]/90 backdrop-blur-md border-b border-white/10">
+    <header className="sticky top-0 z-[9999] w-full bg-[#050A15]/95 border-b border-white/10">
       <nav className="w-full max-w-7xl mx-auto px-4 py-3 flex flex-col md:flex-row md:items-center md:justify-between" aria-label="Navigation principale">
         {/* Desktop: logo left, menu center, panier right */}
         <div className="flex justify-between items-center w-full md:grid md:grid-cols-3 md:gap-4">
