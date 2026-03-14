@@ -8,6 +8,12 @@ body {
   overscroll-behavior-y: none;
 }
 
+/* Reduce iOS rendering work on off-screen sections */
+.cv-auto {
+  content-visibility: auto;
+  contain-intrinsic-size: 0 600px;
+}
+
 @layer base {
   html {
     @apply scroll-smooth;

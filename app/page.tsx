@@ -190,32 +190,36 @@ export default function HomePage() {
     const heroVideo = heroVideoRef.current;
     const missionVideo = missionVideoRef.current;
     if (!heroVideo || !missionVideo) return;
-    const observer = new IntersectionObserver(
-      (entries) => {
-        entries.forEach((entry) => {
-          const video = entry.target as HTMLVideoElement;
-          if (entry.isIntersecting) {
-            const playPromise = video.play();
-            if (playPromise !== undefined) {
-              playPromise.catch(() => { /* Silence strict pour iOS */ });
-            }
-            if (video === heroVideo) {
-              if (!missionVideo.paused) missionVideo.pause();
+
+    // Délai pour ne pas bloquer l'hydratation iOS
+    const setup = setTimeout(() => {
+      const observer = new IntersectionObserver(
+        (entries) => {
+          entries.forEach((entry) => {
+            const video = entry.target as HTMLVideoElement;
+            if (entry.isIntersecting) {
+              const playPromise = video.play();
+              if (playPromise !== undefined) {
+                playPromise.catch(() => { /* Silence strict pour iOS */ });
+              }
+              if (video === heroVideo) {
+                if (!missionVideo.paused) missionVideo.pause();
+              } else {
+                if (!heroVideo.paused) heroVideo.pause();
+              }
             } else {
-              if (!heroVideo.paused) heroVideo.pause();
+              if (!video.paused) video.pause();
             }
-          } else {
-            if (!video.paused) video.pause();
-          }
-        });
-      },
-      { threshold: 0.2 }
-    );
-    observer.observe(heroVideo);
-    observer.observe(missionVideo);
-    return () => {
-      observer.disconnect();
-    };
+          });
+        },
+        { threshold: 0.2, rootMargin: "0px" }
+      );
+      observer.observe(heroVideo);
+      observer.observe(missionVideo);
+      return () => observer.disconnect();
+    }, 500);
+
+    return () => clearTimeout(setup);
   }, []);
 
   const toggleSound = () => {
@@ -291,7 +295,10 @@ export default function HomePage() {
     );
 
   return (
-    <div className={`bg-[#050A15] text-white selection:bg-blue-500/30 block ${isLoading ? "overflow-hidden" : ""}`}>
+    <div
+      className={`bg-[#050A15] text-white selection:bg-blue-500/30 block ${isLoading ? "overflow-hidden" : ""}`}
+      style={{ touchAction: "pan-y" }}
+    >
       {preloaderEl}
 
       {/* 1. HERO VIDEO SECTION */}
@@ -350,7 +357,7 @@ export default function HomePage() {
       </section>
 
       {/* 5. DOUBLE BIOMETRIC TEST (Fingerprint + Face ID) */}
-      <section className="px-4 py-16 md:py-24 max-w-5xl mx-auto">
+      <section className="cv-auto px-4 py-16 md:py-24 max-w-5xl mx-auto">
         <h2 className="text-3xl md:text-5xl font-bold tracking-tight mb-12 text-center">
           Essayez la technologie en direct
         </h2>
@@ -372,8 +379,8 @@ export default function HomePage() {
           onTouchStart={() => setIsGammeHovered(true)}
           onTouchEnd={() => setIsGammeHovered(false)}
         >
-          <motion.div
-            className={`flex w-max gap-4 md:gap-6 px-4 animate-gamme-marquee ${isGammeHovered ? "[animation-play-state:paused]" : ""}`}
+          <div
+            className={`flex w-max gap-4 md:gap-6 px-4 animate-gamme-marquee will-change-transform ${isGammeHovered ? "[animation-play-state:paused]" : ""}`}
           >
             {[1, 2].map((copy) =>
               carouselProducts.map((product, i) => (
@@ -392,7 +399,7 @@ export default function HomePage() {
                 </div>
               ))
             )}
-          </motion.div>
+          </div>
         </div>
       </section>
 
@@ -447,7 +454,7 @@ export default function HomePage() {
       </section>
 
       {/* Mission – themed text */}
-      <section className="py-12 md:py-16 bg-[#050A15] text-center px-4 max-w-4xl mx-auto">
+      <section className="cv-auto py-12 md:py-16 bg-[#050A15] text-center px-4 max-w-4xl mx-auto">
         <h2 className="text-3xl md:text-5xl font-bold tracking-tight text-white mb-6">
           Votre sécurité.<br />
           <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-cyan-300">Notre mission.</span>
@@ -458,7 +465,7 @@ export default function HomePage() {
       </section>
 
       {/* Foire Aux Questions */}
-      <section className="px-4 py-16 md:py-24 bg-[#050A15]" aria-labelledby="faq-heading">
+      <section className="cv-auto px-4 py-16 md:py-24 bg-[#050A15]" aria-labelledby="faq-heading">
         <h2 id="faq-heading" className="text-3xl md:text-4xl font-bold text-center text-white mb-10">
           Foire Aux Questions
         </h2>
@@ -560,7 +567,7 @@ export default function HomePage() {
         className="fixed bottom-6 right-4 md:bottom-6 md:right-6 z-[90] flex items-center justify-center w-14 h-14 rounded-full bg-[#25D366] text-white shadow-lg hover:bg-[#20BD5A] transition-colors focus:outline-none focus:ring-2 focus:ring-[#25D366] focus:ring-offset-2 focus:ring-offset-[#050A15]"
         aria-label="Contactez-nous sur WhatsApp"
       >
-        <span className="absolute inline-flex h-full w-full rounded-full bg-[#25D366] opacity-75 animate-ping" aria-hidden />
+        <span className="absolute inline-flex h-full w-full rounded-full bg-[#25D366] opacity-75 hidden" aria-hidden />
         <MessageCircle className="w-7 h-7 relative z-10" />
       </a>
 
