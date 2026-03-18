@@ -120,7 +120,7 @@ export default function BoutiquePage() {
   }, []);
 
   return (
-    <div className="min-h-screen bg-[#050A15] text-white pb-24">
+    <div className="min-h-[100dvh] bg-[#050A15] text-white pb-24">
       <main>
         {PRODUCTS.map((product) => (
           <div

@@ -1,20 +1,9 @@
-"use client";
-
 import React from "react";
-import { motion } from "framer-motion";
 
 export default function TopBanner() {
   return (
     <div className="w-full py-3 bg-blue-600 overflow-hidden shrink-0" role="marquee" aria-label="RMX Serrure intelligente">
-      <motion.div
-        className="flex whitespace-nowrap text-white"
-        animate={{ x: ["0%", "-50%"] }}
-        transition={{
-          repeat: Infinity,
-          ease: "linear",
-          duration: 15,
-        }}
-      >
+      <div className="flex whitespace-nowrap text-white animate-bestsellers-marquee will-change-transform">
         {[1, 2].map((copy) => (
           <span
             key={copy}
@@ -23,7 +12,7 @@ export default function TopBanner() {
             {Array(8).fill("RMX ✦ SERRURE INTELLIGENTE ✦ RMX ✦ FACE ID 3D ✦ ").join("")}
           </span>
         ))}
-      </motion.div>
+      </div>
     </div>
   );
 }

@@ -41,7 +41,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="fr" className={`${inter.variable} ${orbitron.variable}`}>
-      <body className="flex flex-col min-h-screen bg-[#050A15] text-white overflow-x-hidden">
+      <body className="flex flex-col min-h-[100dvh] bg-[#050A15] text-white overflow-x-hidden">
         <CartProvider>
           <TopBanner />
           <Navbar />
